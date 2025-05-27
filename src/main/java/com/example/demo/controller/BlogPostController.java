@@ -60,7 +60,15 @@ public class BlogPostController {
 
     @DeleteMapping("/api/deletepost/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable String id) {
-        service.deletePost(id);
-        return ResponseEntity.noContent().build();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName(); // get logged-in user's email
+
+        try {
+            service.deletePost(id, email);
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 403 Forbidden
+        }
     }
+
 }

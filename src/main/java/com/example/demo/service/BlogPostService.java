@@ -67,9 +67,22 @@ public class BlogPostService {
     }
 
 
+       public void deletePost(String postId, String email) {
+        BlogPost post = repo.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found with ID: " + postId));
 
-    public void deletePost(String id) {
-        repo.deleteById(id);
+        Optional<User> userOpt = uRepo.findByEmail(email);
+        if (userOpt.isEmpty()) {
+            throw new RuntimeException("User not found with email: " + email);
+        }
+
+        User user = userOpt.get();
+
+        if (!post.getAuthorId().equals(user.getId())) {
+            throw new RuntimeException("Unauthorized to delete this post.");
+        }
+
+        repo.deleteById(postId);
     }
 
 }
