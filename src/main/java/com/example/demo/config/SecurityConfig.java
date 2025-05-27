@@ -26,10 +26,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints
-                        .requestMatchers("/", "/api/posts", "/api/getpost/**", "/api/createpost", "/api/newuser", "/api/{email}").permitAll()
+                        .requestMatchers("/", "/api/posts", "/api/getpost/**", "/api/newuser", "/api/{email}").permitAll()
 
-                        // Protected endpoints (authentication required)
-                        .requestMatchers("/api/post/**", "/api/deletepost/**").authenticated()
+                        // Authenticated endpoints
+                        .requestMatchers("/api/createpost", "/api/post/**", "/api/deletepost/**").authenticated()
 
                         // All other requests require authentication
                         .anyRequest().authenticated()

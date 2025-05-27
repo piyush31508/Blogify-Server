@@ -6,9 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -36,21 +39,23 @@ public class BlogPostController {
 
     @PostMapping("/api/createpost")
     public ResponseEntity<BlogPost> createPost(@RequestBody BlogPost post) {
-        return ResponseEntity.ok(service.createPost(post));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName(); // This will return the username/email from Basic Auth
+
+        BlogPost savedPost = service.createPost(post, email);
+        return ResponseEntity.ok(savedPost);
     }
 
     @PutMapping("/api/post/{id}")
     public ResponseEntity<BlogPost> updatePost(
             @PathVariable String id,
-            @RequestBody BlogPost post,
-            @RequestParam("uID") String uId) {
+            @RequestBody BlogPost post) {
 
-        BlogPost result = service.updatePost(id, post, uId);
-        if (result != null) {
-            return ResponseEntity.ok(result);
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName(); // Extract the authenticated user's email
+
+        BlogPost result = service.updatePost(id, post, email);
+        return ResponseEntity.ok(result);
     }
 
     @DeleteMapping("/api/deletepost/{id}")
