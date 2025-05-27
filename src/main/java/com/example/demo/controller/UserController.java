@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,23 @@ public class UserController {
         return ResponseEntity.ok(createdUser);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody User loginUser, HttpSession session) {
+        User user = service.getUserByEmail(loginUser.getEmail());
+
+        if (user != null && user.getPassword().equals(loginUser.getPassword())) {
+            session.setAttribute("userId", user.getId()); // Store ID in session
+            return ResponseEntity.ok("Login successful");
+        } else {
+            return ResponseEntity.status(401).body("Invalid email or password");
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpSession session) {
+        session.invalidate();
+        return ResponseEntity.ok("Logout successful");
+    }
 
 
     @GetMapping("/{email}")
