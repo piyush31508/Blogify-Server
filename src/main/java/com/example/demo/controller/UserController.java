@@ -12,8 +12,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*")
-public class UserController {
+@CrossOrigin(
+        origins = "*", // or "http://localhost:3000" for frontend dev
+        allowedHeaders = "*",
+        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS}
+)public class UserController {
 
     @Autowired
     private UserService service;
