@@ -48,16 +48,18 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-    CorsConfiguration config = new CorsConfiguration();
-    config.setAllowedOrigins(Arrays.asList("https://blogify-five-murex.vercel.app/"));
-    config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-    config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-    config.setAllowCredentials(true); // Optional if using cookies or HTTP Basic Auth
+        CorsConfiguration config = new CorsConfiguration();
+        // Remove trailing slash - this was causing the 401 error!
+        config.setAllowedOrigins(Arrays.asList("https://blogify-five-murex.vercel.app"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        // Use wildcard for headers to accept all headers
+        config.setAllowedHeaders(Arrays.asList("*"));
+        config.setAllowCredentials(true);
 
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", config); // applies to all routes
-    return source;
-}
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
 
 
     @Bean
