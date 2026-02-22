@@ -32,13 +32,21 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints
-                        .requestMatchers("/", "/api/posts", "/api/getpost/**", "/api/newuser", "/api/{email}").permitAll()
+                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/api/posts").permitAll()
+                        .requestMatchers("/api/getpost/**").permitAll()
+                        .requestMatchers("/api/newuser").permitAll()
+                        .requestMatchers("/api/login").permitAll()
+                        .requestMatchers("/api/users").permitAll()
 
                         // Authenticated endpoints
-                        .requestMatchers("/api/createpost", "/api/post/**", "/api/deletepost/**").authenticated()
+                        .requestMatchers("/api/createpost").authenticated()
+                        .requestMatchers("/api/post/**").authenticated()
+                        .requestMatchers("/api/deletepost/**").authenticated()
+                        .requestMatchers("/api/logout").authenticated()
 
-                        // All other requests require authentication
-                        .anyRequest().authenticated()
+                        // Allow everything else (including /api/{email})
+                        .anyRequest().permitAll()
                 )
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
